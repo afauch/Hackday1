@@ -3,18 +3,22 @@
 int fps;
 
 // create an array to hold the last 10 positions
-int[] posArrayX;
-int[] posArrayY;
+float[] posArrayX;
+float[] posArrayY;
+float[] posArrayZ;
 int arrayLength;
 int arraySpan; // how far 'back' in the array we do look for changes? 
-int currentX;
-int currentY;
+float currentX;
+float currentY;
+float currentZ;
 
 // rate vars
-int distanceX;
-int distanceY;
+float distanceX;
+float distanceY;
+float distanceZ;
 float dpsX;
 float dpsY;
+float dpsZ;
 
 void setup() {
   
@@ -30,15 +34,16 @@ void setup() {
   frameRate(fps);
   
   // Array to hold last 10 positions
-  posArrayX = new int[arrayLength];
-  posArrayY = new int[arrayLength];
+  posArrayX = new float[arrayLength];
+  posArrayY = new float[arrayLength];
+  posArrayZ = new float[arrayLength];
   
   // Initialize Array to zero
   initializeArray();
   
   size(400,400);
   background(0);
-  print(posArrayX[4]);
+  println(posArrayX[4]);
   
 }
 
@@ -107,7 +112,7 @@ boolean isFast() {
   // if the difference between the CURRENT X position
   // and the original X position is 
   
-     print("Fast!");
+     println("Fast!");
      return true;
   
   } else {
@@ -130,11 +135,16 @@ void calculateRate() {
   
   distanceX = abs(currentX - posArrayX[0]);
   distanceY = abs(currentY - posArrayY[0]);
+  distanceZ = abs(currentZ - posArrayZ[0]);
   
   // calculate distance per second X
   dpsX = distanceX/(float(arrayLength)/float(fps));
   dpsY = distanceY/(float(arrayLength)/float(fps));
-  print("Rate is " + dpsX);
+  dpsZ = distanceZ/(float(arrayLength)/float(fps));
+  println("Rate X is " + dpsX);
+  println("Rate Y is " + dpsY);
+  println("Rate Z is " + dpsZ);
+
   
   // what is time here
   // it's the last 10 refreshes
