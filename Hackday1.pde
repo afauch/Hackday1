@@ -37,9 +37,8 @@ void setup() {
   // ** RATE TUNING **
   // i.e. how fast is fast?
   fastRate = 150;
-  midRate = 40;
+  midRate = 80;
   slowRate = 20;
-  
   
   // Framerate
   frameRate(fps);
@@ -136,35 +135,6 @@ void determineAction() {
   }
          
 }
- 
-
-
-
-//boolean isFast() {
-//  
-//  // array span is arbitrarily 80% of the arrayLength
-//  arraySpan = int(.8 * arrayLength);
-// 
-//  if(dpsX > fastRate || dpsY > fastRate || dpsZ > fastRate){
-//  // hefty conditional
-//  // if the difference between the CURRENT X position
-//  // and the original X position is 
-//  
-//     println("Fast!");
-//     return true;
-//  
-//  } else {
-//   
-//     return false; 
-//    
-//  }
-//}
-
-// what i really want to do is establish the idea of RATE
-// RATE = DISTANCE / TIME
-
-// What's my TIME here?
-// For this demo we want a calculation of pixels per second
 
 void calculateRate() {
   
@@ -182,7 +152,6 @@ void calculateRate() {
 
   //println("Rate Vector is: " + rateVector[0] + ", " + rateVector[1] + ", " + rateVector[2]);
 
-  
   
 }
 
