@@ -1,5 +1,12 @@
 import themidibus.*; // Import MIDI bus library for sending to Ableton
 
+// OSC
+import oscP5.*;
+import netP5.*;
+  
+OscP5 oscP5;
+NetAddress myRemoteLocation;
+
 // ** MIDIBUS SETUP ** //
 MidiBus myBus;
 
@@ -31,10 +38,13 @@ float slowRate;
 
 void setup() {
   
+  // ** OSC SETUP ** //
+  /* start oscP5, listening for incoming messages at port 12000 */
+  oscP5 = new OscP5(this,7300);
   
-  // ** MIDIBUS **//
+  // ** MIDIBUS SETUP **//
   MidiBus.list(); // List all available MIDI devices 
-  myBus = new MidiBus(this, -1, "To Ableton"); // Create a new MidiBus with no input device and the virtual "To Ableton" bus as the Output.
+  myBus = new MidiBus(this, -1, "HackOne"); // Create a new MidiBus with no input device and the virtual "To Ableton" bus as the Output.
 
   // ** CONSTANTS **
   
@@ -62,7 +72,7 @@ void setup() {
   
   size(440,440);
   background(0);
-  println(posArrayX[4]);
+  //// println(posArrayX[4]);
   
 }
 
@@ -73,7 +83,7 @@ void draw() {
   
   // assign last positions
   assignArray();
-  println("Mouse Y is" + posArrayY[arrayLength-1]);
+  // println("Mouse Y is" + posArrayY[arrayLength-1]);
   calculateRate();
   // determineAction();
   // rateToMidi();
@@ -135,18 +145,18 @@ void determineAction() {
   if(dpsX > fastRate || dpsY > fastRate || dpsZ > fastRate){
              // fast X action here
              sendMidiNote(72);
-             println("fast X");
+             // println("fast X");
   } else if(dpsX > midRate || dpsY > midRate || dpsZ > midRate) {
             // mid X action here
-             println("mid X");
+             // println("mid X");
              sendMidiNote(64);
   } else if(dpsX > slowRate || dpsY > slowRate || dpsZ > slowRate){
              // slow X action here
              sendMidiNote(32);
-             println("slow X");
+             // println("slow X");
   } else {
              // stagnant action
-             println("stagnant");
+             // println("stagnant");
   }
          
 }
@@ -165,9 +175,8 @@ void calculateRate() {
   dpsY = distanceY/(float(arrayLength)/float(fps));
   dpsZ = distanceZ/(float(arrayLength)/float(fps));
 
-  //println("Rate Vector is: " + rateVector[0] + ", " + rateVector[1] + ", " + rateVector[2]);
+  // println("Rate Vector is: " + dpsX + ", " + dpsY + ", " + dpsZ);
 
-  
 }
 
 void sendMidiNote(int thisPitch) {
@@ -206,6 +215,19 @@ void posToMidi(){
    int normCurrentY = int((1-(currentY/width))*127);
    sendMidiNote(normCurrentY);
   
+}
+
+/* incoming osc message are forwarded to the oscEvent method. */
+void oscEvent(OscMessage theOscMessage) {
+  /* print the address pattern and the typetag of the received OscMessage */
+  print("### received an osc message.");
+  print(" addrpattern: "+theOscMessage.addrPattern());
+  // println(" typetag: "+theOscMessage.typetag());
+  int blobId = theOscMessage.get(0).intValue();
+  float posX = theOscMessage.get(1).floatValue();
+  float posY = theOscMessage.get(2).floatValue();
+  float posZ = theOscMessage.get(3).floatValue();
+  println(" message is: " + blobId + ", " + posX + ", " + posY + ", " + posZ);
 }
 
 
