@@ -20,6 +20,11 @@ float dpsX;
 float dpsY;
 float dpsZ;
 
+// fine-tuning speeds
+float fastRate;
+float mediumRate;
+float slowRate;
+
 void setup() {
   
   // ** CONSTANTS **
@@ -28,6 +33,12 @@ void setup() {
   arrayLength = 10;
   // FPS
   fps = 60;
+  
+  // ** RATE TUNING **
+  // i.e. how fast is fast?
+  fastRate = 400;
+  mediumRate = 200;
+  slowRate = 100;
   
   
   // Framerate
@@ -56,7 +67,8 @@ void draw() {
   assignArray();
   println("Mouse Y is" + posArrayY[arrayLength-1]);
   calculateRate();
-  isFast();
+   fill(int(dpsX),int(dpsY),int(dpsZ));
+   rect(0,0,height,width); 
 
   
 //  if(mouseX > width/2) {
@@ -91,8 +103,13 @@ void assignArray() {
         posArrayX[i] = posArrayX[i+1];
         posArrayY[i] = posArrayY[i+1];
       } else { // for the last spot, assign the current mouse position
+        
+        
+        // ** HERE'S WHERE WE INPUT DRONE COORDINATES **//
         posArrayX[i] = mouseX;
         posArrayY[i] = mouseY;
+        // posArrayZ[i] = mouseZ;
+        
       }       
   }
   
@@ -107,7 +124,7 @@ boolean isFast() {
   // array span is arbitrarily 80% of the arrayLength
   arraySpan = int(.8 * arrayLength);
  
-  if(dpsX > 300 || dpsY > 300){
+  if(dpsX > 300 || dpsY > 300 || dpsZ > 300){
   // hefty conditional
   // if the difference between the CURRENT X position
   // and the original X position is 
