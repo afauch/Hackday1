@@ -2,7 +2,9 @@
 int[] posArrayX;
 int[] posArrayY;
 int arrayLength;
-
+int arraySpan; // how far 'back' in the array we do look for changes? 
+int currentX;
+int currentY;
 
 void setup() {
   
@@ -30,6 +32,7 @@ void draw() {
   // assign last positions
   assignArray();
   println("Mouse Y is" + posArrayY[arrayLength-1]);
+  isFast();
   
 //  if(mouseX > width/2) {
 //   
@@ -65,9 +68,31 @@ void assignArray() {
       } else { // for the last spot, assign the current mouse position
         posArrayX[i] = mouseX;
         posArrayY[i] = mouseY;
-      }
-    
+      }       
   }
   
+  // re-assign currentX and currentY
+  currentX = posArrayX[arrayLength-1];
+  currentY = posArrayY[arrayLength-1];
   
+}
+
+boolean isFast() {
+  
+  // array span is arbitrarily 80% of the arrayLength
+  arraySpan = int(.8 * arrayLength);
+ 
+  if((currentX - posArrayX[0] > 1)){
+  // hefty conditional
+  // if the difference between the CURRENT X position
+  // and the original X position is 
+  
+     print("Fast!");
+     return true;
+  
+  } else {
+   
+   return false; 
+    
+  }
 }
