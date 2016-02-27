@@ -36,9 +36,9 @@ void setup() {
   
   // ** RATE TUNING **
   // i.e. how fast is fast?
-  fastRate = 400;
-  mediumRate = 200;
-  slowRate = 100;
+  fastRate = 150;
+  mediumRate = 40;
+  slowRate = 20;
   
   
   // Framerate
@@ -52,7 +52,7 @@ void setup() {
   // Initialize Array to zero
   initializeArray();
   
-  size(400,400);
+  size(1280,800);
   background(0);
   println(posArrayX[4]);
   
@@ -60,17 +60,14 @@ void setup() {
 
 void draw() {
   
-  background(0);
+  background(int(dpsX),int(dpsY),int(dpsZ));
   stroke(255,0,0);
   
   // assign last positions
   assignArray();
   println("Mouse Y is" + posArrayY[arrayLength-1]);
   calculateRate();
-   fill(int(dpsX),int(dpsY),int(dpsZ));
-   rect(0,0,height,width); 
-
-  
+   
 //  if(mouseX > width/2) {
 //   
 //     rect(0,0,10,10); 
@@ -124,7 +121,7 @@ boolean isFast() {
   // array span is arbitrarily 80% of the arrayLength
   arraySpan = int(.8 * arrayLength);
  
-  if(dpsX > 300 || dpsY > 300 || dpsZ > 300){
+  if(dpsX > fastRate || dpsY > fastRate || dpsZ > fastRate){
   // hefty conditional
   // if the difference between the CURRENT X position
   // and the original X position is 
@@ -161,43 +158,6 @@ void calculateRate() {
   println("Rate X is " + dpsX);
   println("Rate Y is " + dpsY);
   println("Rate Z is " + dpsZ);
-
-  
-  // what is time here
-  // it's the last 10 refreshes
-  // so if it refreshes every 60th of a second
-  // then 
-  // if there was 1 frame every second
-  // then the time would be 1 second
-  // and the rate would simply be (distance) per second
-  // if there were 2 frames every second
-  // then the rate would be (distance)*2 per second
-  // but the distance is calculated over 10 (or arrayLength) frames
-  // so the distance should really be multiplied by arrayLength
-  // to represent the amount captured in 
-  
-  // if there was 1 frame every second
-  // then the distance would be calculated over 10 seconds
-  // meaning that the distance per second
-  // should be divided by 10.
-  
-  // if there were 2 frames every second
-  // then the distance would be calculated over 5 seconds
-  // meaning that the distance per second
-  // should be divided by 5
-  
-  // so you get your divisor as an equation of
-  // arrayLength / FPS
-  // so the distance per second
-  // should be divided by (arrayLength/FPS)
-  
-  
-  // dps = distance/(arrayLength/FPS)
-  
-  // Right now I'm just doing this along X axis.
-  // I'd really like this to be true along X AND Y axis 
-  // How can I capture both?
-  // 
 
   
   
