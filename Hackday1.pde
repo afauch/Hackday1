@@ -12,7 +12,9 @@ int currentY;
 
 // rate vars
 int distanceX;
+int distanceY;
 float dpsX;
+float dpsY;
 
 void setup() {
   
@@ -48,8 +50,9 @@ void draw() {
   // assign last positions
   assignArray();
   println("Mouse Y is" + posArrayY[arrayLength-1]);
-  //isFast();
   calculateRate();
+  isFast();
+
   
 //  if(mouseX > width/2) {
 //   
@@ -99,7 +102,7 @@ boolean isFast() {
   // array span is arbitrarily 80% of the arrayLength
   arraySpan = int(.8 * arrayLength);
  
-  if((abs(currentX - posArrayX[0]) > 10)){
+  if(dpsX > 300 || dpsY > 300){
   // hefty conditional
   // if the difference between the CURRENT X position
   // and the original X position is 
@@ -109,7 +112,7 @@ boolean isFast() {
   
   } else {
    
-   return false; 
+     return false; 
     
   }
 }
@@ -126,9 +129,11 @@ void calculateRate() {
   // it's the difference between NOW and THEN
   
   distanceX = abs(currentX - posArrayX[0]);
+  distanceY = abs(currentY - posArrayY[0]);
   
   // calculate distance per second X
   dpsX = distanceX/(float(arrayLength)/float(fps));
+  dpsY = distanceY/(float(arrayLength)/float(fps));
   print("Rate is " + dpsX);
   
   // what is time here
@@ -162,7 +167,10 @@ void calculateRate() {
   
   // dps = distance/(arrayLength/FPS)
   
-  
+  // Right now I'm just doing this along X axis.
+  // I'd really like this to be true along X AND Y axis 
+  // How can I capture both?
+  // 
 
   
   
