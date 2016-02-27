@@ -13,6 +13,11 @@ MidiBus myBus;
 // constant FPS
 int fps;
 
+// kinect coords
+float posX;
+float posY;
+float posZ;
+
 // create an array to hold the last 10 positions
 float[] posArrayX;
 float[] posArrayY;
@@ -125,9 +130,9 @@ void assignArray() {
         
         
         // ** HERE'S WHERE WE INPUT DRONE COORDINATES **//
-        posArrayX[i] = mouseX;
-        posArrayY[i] = mouseY;
-        // posArrayZ[i] = mouseZ;
+        posArrayX[i] = posX;
+        posArrayY[i] = posY;
+        posArrayZ[i] = posZ;
         
       }       
   }
@@ -224,9 +229,9 @@ void oscEvent(OscMessage theOscMessage) {
   print(" addrpattern: "+theOscMessage.addrPattern());
   // println(" typetag: "+theOscMessage.typetag());
   int blobId = theOscMessage.get(0).intValue();
-  float posX = theOscMessage.get(1).floatValue();
-  float posY = theOscMessage.get(2).floatValue();
-  float posZ = theOscMessage.get(3).floatValue();
+  posX = theOscMessage.get(1).floatValue() * 100;
+  posY = theOscMessage.get(2).floatValue() * 100;
+  posZ = theOscMessage.get(3).floatValue() * 100;
   println(" message is: " + blobId + ", " + posX + ", " + posY + ", " + posZ);
 }
 
