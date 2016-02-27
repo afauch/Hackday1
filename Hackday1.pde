@@ -41,7 +41,18 @@ float fastRate;
 float midRate;
 float slowRate;
 
+
+// ****** SETUP ****** //
+// ******************* //
 void setup() {
+  
+  // ** CONSTANTS ** //
+  arrayLength = 10; // How many positions should we hold in memory
+  fps = 60;   // FPS
+  // rate tuning i.e. how fast is fast?
+  fastRate = 300;
+  midRate = 150;
+  slowRate = 0;
   
   // ** OSC SETUP ** //
   /* start oscP5, listening for incoming messages at port 12000 */
@@ -50,59 +61,38 @@ void setup() {
   // ** MIDIBUS SETUP **//
   MidiBus.list(); // List all available MIDI devices 
   myBus = new MidiBus(this, -1, "HackOne"); // Create a new MidiBus with no input device and the virtual "To Ableton" bus as the Output.
-
-  // ** CONSTANTS **
   
-  // How many positions should we hold in memory
-  arrayLength = 10;
-  // FPS
-  fps = 60;
-  
-  // ** RATE TUNING **
-  // i.e. how fast is fast?
-  fastRate = 300;
-  midRate = 150;
-  slowRate = 0;
-  
-  // Framerate
+  // ** PROCESSING SETUP ** //
+  size(440,440);
+  background(0); 
   frameRate(fps);
   
-  // Array to hold last 10 positions
+  // ** TIME ARRAY SETUP ** //
   posArrayX = new float[arrayLength];
   posArrayY = new float[arrayLength];
   posArrayZ = new float[arrayLength];
-  
-  // Initialize Array to zero
-  initializeArray();
-  
-  size(440,440);
-  background(0);
-  //// println(posArrayX[4]);
-  
+  initializeArray(); // Initialize array to zero
+    
 }
 
+// ****** DRAW ****** //
+// ******************* //
 void draw() {
   
-  background(int(dpsX),int(dpsY),int(dpsZ));
-  stroke(255,0,0);
+  // ** RESET BACKGROUND COLOR ** //
+  background(int(dpsX),int(dpsY),int(dpsZ)); // based on rate
   
-  // assign last positions
-  assignArray();
-  // println("Mouse Y is" + posArrayY[arrayLength-1]);
+  assignArray(); // assign last positions
   calculateRate();
-  // determineAction();
-  // rateToMidi();
-  posToMidi();
-  
-   
-//  if(mouseX > width/2) {
-//   
-//     rect(0,0,10,10); 
-//    
-//  }
+  // determineAction(); // used for rate-based dynamics
+  // rateToMidi(); // used for rate-to-midi functions
+  posToMidi(); // used for position-to-midi functions
   
 }
 
+
+// ****** FUNCTIONS ****** //
+// ******************* //
 
 void initializeArray() {
   // so we don't start with null
@@ -229,9 +219,9 @@ void oscEvent(OscMessage theOscMessage) {
   print(" addrpattern: "+theOscMessage.addrPattern());
   // println(" typetag: "+theOscMessage.typetag());
   int blobId = theOscMessage.get(0).intValue();
-  posX = theOscMessage.get(1).floatValue() * 100;
-  posY = theOscMessage.get(2).floatValue() * 100;
-  posZ = theOscMessage.get(3).floatValue() * 100;
+  posX = theOscMessage.get(1).floatValue();
+  posY = theOscMessage.get(2).floatValue();
+  posZ = theOscMessage.get(3).floatValue();
   println(" message is: " + blobId + ", " + posX + ", " + posY + ", " + posZ);
 }
 
