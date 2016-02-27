@@ -56,7 +56,7 @@ void setup() {
   
   // ** OSC SETUP ** //
   /* start oscP5, listening for incoming messages at port 12000 */
-  oscP5 = new OscP5(this,7300);
+  oscP5 = new OscP5(this,7000);
   
   // ** MIDIBUS SETUP **//
   MidiBus.list(); // List all available MIDI devices 
@@ -121,14 +121,14 @@ void assignArray() {
         
         
         // ** HERE'S WHERE WE INPUT DRONE COORDINATES **//
-//        posArrayX[i] = posX;
-//        posArrayY[i] = posY;
-//        posArrayZ[i] = posZ;
+        posArrayX[i] = posX;
+        posArrayY[i] = posY;
+        posArrayZ[i] = posZ;
         
         // ** DEBUG: FOR TESTING WITHOUT DRONE ** //
-        posArrayX[i] = mouseX/2;
-        posArrayY[i] = mouseY/2;
-        posArrayZ[i] = 100;
+//        posArrayX[i] = mouseX/2;
+//        posArrayY[i] = mouseY/2;
+//        posArrayZ[i] = 100;
         
       }       
   }
