@@ -1,3 +1,7 @@
+import themidibus.*; // Import MIDI bus library for sending to Ableton
+
+// ** MIDIBUS SETUP ** //
+MidiBus myBus;
 
 // constant FPS
 int fps;
@@ -27,6 +31,11 @@ float slowRate;
 
 void setup() {
   
+  
+  // ** MIDIBUS **//
+  MidiBus.list(); // List all available MIDI devices 
+  myBus = new MidiBus(this, -1, "To Ableton"); // Create a new MidiBus with no input device and the virtual "To Ableton" bus as the Output.
+
   // ** CONSTANTS **
   
   // How many positions should we hold in memory
@@ -67,6 +76,7 @@ void draw() {
   println("Mouse Y is" + posArrayY[arrayLength-1]);
   calculateRate();
   determineAction();
+  sendMidiNote();
    
 //  if(mouseX > width/2) {
 //   
@@ -152,6 +162,25 @@ void calculateRate() {
 
   //println("Rate Vector is: " + rateVector[0] + ", " + rateVector[1] + ", " + rateVector[2]);
 
+  
+}
+
+void sendMidiNote() {
+  
+  int channel = 0;
+  int pitch = 64;
+  int velocity = 127;
+
+  myBus.sendNoteOn(channel, pitch, velocity); // Send a Midi noteOn
+  delay(200);
+  myBus.sendNoteOff(channel, pitch, velocity); // Send a Midi nodeOff
+
+  int number = 0;
+  int value = 90;
+
+  myBus.sendControllerChange(channel, number, value); // Send a controllerChange
+  delay(2000);
+  
   
 }
 
