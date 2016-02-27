@@ -22,7 +22,7 @@ float dpsZ;
 
 // fine-tuning speeds
 float fastRate;
-float mediumRate;
+float midRate;
 float slowRate;
 
 void setup() {
@@ -37,7 +37,7 @@ void setup() {
   // ** RATE TUNING **
   // i.e. how fast is fast?
   fastRate = 150;
-  mediumRate = 40;
+  midRate = 40;
   slowRate = 20;
   
   
@@ -52,7 +52,7 @@ void setup() {
   // Initialize Array to zero
   initializeArray();
   
-  size(1280,800);
+  size(440,440);
   background(0);
   println(posArrayX[4]);
   
@@ -67,6 +67,7 @@ void draw() {
   assignArray();
   println("Mouse Y is" + posArrayY[arrayLength-1]);
   calculateRate();
+  determineAction();
    
 //  if(mouseX > width/2) {
 //   
@@ -116,25 +117,48 @@ void assignArray() {
   
 }
 
-boolean isFast() {
+
+void determineAction() {
   
-  // array span is arbitrarily 80% of the arrayLength
-  arraySpan = int(.8 * arrayLength);
- 
+  // state machine / switch machine
   if(dpsX > fastRate || dpsY > fastRate || dpsZ > fastRate){
-  // hefty conditional
-  // if the difference between the CURRENT X position
-  // and the original X position is 
-  
-     println("Fast!");
-     return true;
-  
+             // fast X action here
+             println("fast X");
+  } else if(dpsX > midRate || dpsY > midRate || dpsZ > midRate) {
+            // mid X action here
+             println("mid X");
+  } else if(dpsX > slowRate || dpsY > slowRate || dpsZ > slowRate){
+             // slow X action here
+             println("slow X");
   } else {
-   
-     return false; 
-    
+             // stagnant action
+             println("stagnant");
   }
+         
 }
+ 
+
+
+
+//boolean isFast() {
+//  
+//  // array span is arbitrarily 80% of the arrayLength
+//  arraySpan = int(.8 * arrayLength);
+// 
+//  if(dpsX > fastRate || dpsY > fastRate || dpsZ > fastRate){
+//  // hefty conditional
+//  // if the difference between the CURRENT X position
+//  // and the original X position is 
+//  
+//     println("Fast!");
+//     return true;
+//  
+//  } else {
+//   
+//     return false; 
+//    
+//  }
+//}
 
 // what i really want to do is establish the idea of RATE
 // RATE = DISTANCE / TIME
@@ -155,9 +179,8 @@ void calculateRate() {
   dpsX = distanceX/(float(arrayLength)/float(fps));
   dpsY = distanceY/(float(arrayLength)/float(fps));
   dpsZ = distanceZ/(float(arrayLength)/float(fps));
-  println("Rate X is " + dpsX);
-  println("Rate Y is " + dpsY);
-  println("Rate Z is " + dpsZ);
+
+  //println("Rate Vector is: " + rateVector[0] + ", " + rateVector[1] + ", " + rateVector[2]);
 
   
   
