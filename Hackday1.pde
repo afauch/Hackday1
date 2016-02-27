@@ -75,7 +75,10 @@ void draw() {
   assignArray();
   println("Mouse Y is" + posArrayY[arrayLength-1]);
   calculateRate();
-  determineAction();
+  // determineAction();
+  // rateToMidi();
+  posToMidi();
+  
    
 //  if(mouseX > width/2) {
 //   
@@ -174,7 +177,7 @@ void sendMidiNote(int thisPitch) {
   int velocity = 127;
 
   myBus.sendNoteOn(channel, pitch, velocity); // Send a Midi noteOn
-  delay(200);
+  delay(100);
   myBus.sendNoteOff(channel, pitch, velocity); // Send a Midi nodeOff
 
 //  REFERENCE: FOR SENDING CONTROL VALUES
@@ -184,6 +187,24 @@ void sendMidiNote(int thisPitch) {
 //  myBus.sendControllerChange(channel, number, value); // Send a controllerChange
 //  delay(2000);
   
+}
+
+void rateToMidi(){
+ 
+  // normalize dpsY to desired range
+  // what's the current RANGE of dpsY?
+  // might need a function to dynamically calculate that eventually 
+
+  int normDpsY = int(dpsY/10);
+  
+  sendMidiNote(normDpsY);
+  
+}
+
+void posToMidi(){
+ 
+   int normCurrentY = int((1-(currentY/width))*127);
+   sendMidiNote(normCurrentY);
   
 }
 
