@@ -76,7 +76,7 @@ void setup() {
 }
 
 // ****** DRAW ****** //
-// ******************* //
+// ****************** //
 void draw() {
   
   // ** RESET BACKGROUND COLOR ** //
@@ -84,15 +84,16 @@ void draw() {
   
   assignArray(); // assign last positions
   calculateRate();
+  xyzToMidi();
   // determineAction(); // used for rate-based dynamics
-  // rateToMidi(); // used for rate-to-midi functions
-  posToMidi(); // used for position-to-midi functions
+  // rateToMidi(); // used for rate-to-midi dynamics
+  // posToMidi(); // used for position-to-midi dynamics
   
 }
 
 
-// ****** FUNCTIONS ****** //
-// ******************* //
+// ****** USED FUNCTIONS ****** //
+// **************************** //
 
 void initializeArray() {
   // so we don't start with null
@@ -120,9 +121,14 @@ void assignArray() {
         
         
         // ** HERE'S WHERE WE INPUT DRONE COORDINATES **//
-        posArrayX[i] = posX;
-        posArrayY[i] = posY;
-        posArrayZ[i] = posZ;
+//        posArrayX[i] = posX;
+//        posArrayY[i] = posY;
+//        posArrayZ[i] = posZ;
+        
+        // ** DEBUG: FOR TESTING WITHOUT DRONE ** //
+        posArrayX[i] = mouseX/2;
+        posArrayY[i] = mouseY/2;
+        posArrayZ[i] = 100;
         
       }       
   }
@@ -130,24 +136,91 @@ void assignArray() {
   // re-assign currentX and currentY
   currentX = posArrayX[arrayLength-1];
   currentY = posArrayY[arrayLength-1];
+  currentZ = posArrayZ[arrayLength-1];
   
 }
 
+
+/* incoming osc message are forwarded to the oscEvent method. */
+void oscEvent(OscMessage theOscMessage) {
+  /* print the address pattern and the typetag of the received OscMessage */
+  print("### received an osc message.");
+  print(" addrpattern: "+theOscMessage.addrPattern());
+  // println(" typetag: "+theOscMessage.typetag());
+  int blobId = theOscMessage.get(0).intValue();
+  posX = theOscMessage.get(1).floatValue();
+  posY = theOscMessage.get(2).floatValue();
+  posZ = theOscMessage.get(3).floatValue();
+  println(" message is: " + blobId + ", " + posX + ", " + posY + ", " + posZ);
+}
+
+
+void sendMidiNote(int thisChannel, float thisPitch, float thisVelocity) {
+  
+  int channel = 0;
+  int pitch = int(thisPitch);
+  int velocity = int(thisVelocity);
+
+  myBus.sendNoteOn(channel, pitch, velocity); // Send a Midi noteOn
+  delay(10);
+  myBus.sendNoteOff(channel, pitch, velocity); // Send a Midi nodeOff
+
+//  REFERENCE: FOR SENDING CONTROL VALUES
+//  int number = 0;
+//  int value = 90;
+//
+//  myBus.sendControllerChange(channel, number, value); // Send a controllerChange
+//  delay(2000);
+  
+}
+
+void sendCtrlNote(int thisChannel, int thisNumber, float thisValue) {
+  
+  int channel = thisChannel;
+  int number = thisNumber;
+  int value = int(thisValue);
+  
+  myBus.sendControllerChange(channel, number, value);
+  delay(10);
+
+}
+
+
+void xyzToMidi() {
+
+  // Send X position as a midi note
+  sendMidiNote(0,currentX,127);
+  
+  
+  // Send Y position as a control function (map to filter)
+  sendCtrlNote(0,88,currentY);
+
+  
+  // Send Z position as a control function (map to volume)
+  sendCtrlNote(0,89,currentZ);
+  
+  println("X: " + currentX + ", Y is: " + currentY + ", Z is:" + currentZ);
+  
+}
+
+
+// ****** UNUSED FUNCTIONS ****** //
+// **************************** //
 
 void determineAction() {
   
   // state machine / switch machine
   if(dpsX > fastRate || dpsY > fastRate || dpsZ > fastRate){
              // fast X action here
-             sendMidiNote(72);
+             sendMidiNote(0,72,127);
              // println("fast X");
   } else if(dpsX > midRate || dpsY > midRate || dpsZ > midRate) {
             // mid X action here
              // println("mid X");
-             sendMidiNote(64);
+             sendMidiNote(0,64,127);
   } else if(dpsX > slowRate || dpsY > slowRate || dpsZ > slowRate){
              // slow X action here
-             sendMidiNote(32);
+             sendMidiNote(0,32,127);
              // println("slow X");
   } else {
              // stagnant action
@@ -174,24 +247,6 @@ void calculateRate() {
 
 }
 
-void sendMidiNote(int thisPitch) {
-  
-  int channel = 0;
-  int pitch = thisPitch;
-  int velocity = 127;
-
-  myBus.sendNoteOn(channel, pitch, velocity); // Send a Midi noteOn
-  delay(100);
-  myBus.sendNoteOff(channel, pitch, velocity); // Send a Midi nodeOff
-
-//  REFERENCE: FOR SENDING CONTROL VALUES
-//  int number = 0;
-//  int value = 90;
-//
-//  myBus.sendControllerChange(channel, number, value); // Send a controllerChange
-//  delay(2000);
-  
-}
 
 void rateToMidi(){
  
@@ -201,29 +256,14 @@ void rateToMidi(){
 
   int normDpsY = int(dpsY/10);
   
-  sendMidiNote(normDpsY);
+  sendMidiNote(0,normDpsY,127);
   
 }
 
 void posToMidi(){
  
-   int normCurrentY = int((1-(currentY/width))*127);
-   sendMidiNote(normCurrentY);
+   int normCurrentY = int(((currentY/width))*127);
+   sendMidiNote(0,normCurrentY,127);
   
 }
-
-/* incoming osc message are forwarded to the oscEvent method. */
-void oscEvent(OscMessage theOscMessage) {
-  /* print the address pattern and the typetag of the received OscMessage */
-  print("### received an osc message.");
-  print(" addrpattern: "+theOscMessage.addrPattern());
-  // println(" typetag: "+theOscMessage.typetag());
-  int blobId = theOscMessage.get(0).intValue();
-  posX = theOscMessage.get(1).floatValue();
-  posY = theOscMessage.get(2).floatValue();
-  posZ = theOscMessage.get(3).floatValue();
-  println(" message is: " + blobId + ", " + posX + ", " + posY + ", " + posZ);
-}
-
-
 
