@@ -1,3 +1,7 @@
+
+// constant FPS
+int fps;
+
 // create an array to hold the last 10 positions
 int[] posArrayX;
 int[] posArrayY;
@@ -6,10 +10,22 @@ int arraySpan; // how far 'back' in the array we do look for changes?
 int currentX;
 int currentY;
 
+// rate vars
+int distanceX;
+float dpsX;
+
 void setup() {
+  
+  // ** CONSTANTS **
   
   // How many positions should we hold in memory
   arrayLength = 10;
+  // FPS
+  fps = 60;
+  
+  
+  // Framerate
+  frameRate(fps);
   
   // Array to hold last 10 positions
   posArrayX = new int[arrayLength];
@@ -32,7 +48,8 @@ void draw() {
   // assign last positions
   assignArray();
   println("Mouse Y is" + posArrayY[arrayLength-1]);
-  isFast();
+  //isFast();
+  calculateRate();
   
 //  if(mouseX > width/2) {
 //   
@@ -82,7 +99,7 @@ boolean isFast() {
   // array span is arbitrarily 80% of the arrayLength
   arraySpan = int(.8 * arrayLength);
  
-  if((currentX - posArrayX[0] > 1)){
+  if((abs(currentX - posArrayX[0]) > 10)){
   // hefty conditional
   // if the difference between the CURRENT X position
   // and the original X position is 
@@ -96,3 +113,60 @@ boolean isFast() {
     
   }
 }
+
+// what i really want to do is establish the idea of RATE
+// RATE = DISTANCE / TIME
+
+// What's my TIME here?
+// For this demo we want a calculation of pixels per second
+
+void calculateRate() {
+  
+  // what's the distance?
+  // it's the difference between NOW and THEN
+  
+  distanceX = abs(currentX - posArrayX[0]);
+  
+  // calculate distance per second X
+  dpsX = distanceX/(float(arrayLength)/float(fps));
+  print("Rate is " + dpsX);
+  
+  // what is time here
+  // it's the last 10 refreshes
+  // so if it refreshes every 60th of a second
+  // then 
+  // if there was 1 frame every second
+  // then the time would be 1 second
+  // and the rate would simply be (distance) per second
+  // if there were 2 frames every second
+  // then the rate would be (distance)*2 per second
+  // but the distance is calculated over 10 (or arrayLength) frames
+  // so the distance should really be multiplied by arrayLength
+  // to represent the amount captured in 
+  
+  // if there was 1 frame every second
+  // then the distance would be calculated over 10 seconds
+  // meaning that the distance per second
+  // should be divided by 10.
+  
+  // if there were 2 frames every second
+  // then the distance would be calculated over 5 seconds
+  // meaning that the distance per second
+  // should be divided by 5
+  
+  // so you get your divisor as an equation of
+  // arrayLength / FPS
+  // so the distance per second
+  // should be divided by (arrayLength/FPS)
+  
+  
+  // dps = distance/(arrayLength/FPS)
+  
+  
+
+  
+  
+}
+
+
+
