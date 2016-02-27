@@ -45,9 +45,9 @@ void setup() {
   
   // ** RATE TUNING **
   // i.e. how fast is fast?
-  fastRate = 150;
-  midRate = 80;
-  slowRate = 20;
+  fastRate = 300;
+  midRate = 150;
+  slowRate = 0;
   
   // Framerate
   frameRate(fps);
@@ -76,7 +76,6 @@ void draw() {
   println("Mouse Y is" + posArrayY[arrayLength-1]);
   calculateRate();
   determineAction();
-  sendMidiNote();
    
 //  if(mouseX > width/2) {
 //   
@@ -132,12 +131,15 @@ void determineAction() {
   // state machine / switch machine
   if(dpsX > fastRate || dpsY > fastRate || dpsZ > fastRate){
              // fast X action here
+             sendMidiNote(72);
              println("fast X");
   } else if(dpsX > midRate || dpsY > midRate || dpsZ > midRate) {
             // mid X action here
              println("mid X");
+             sendMidiNote(64);
   } else if(dpsX > slowRate || dpsY > slowRate || dpsZ > slowRate){
              // slow X action here
+             sendMidiNote(32);
              println("slow X");
   } else {
              // stagnant action
@@ -165,21 +167,22 @@ void calculateRate() {
   
 }
 
-void sendMidiNote() {
+void sendMidiNote(int thisPitch) {
   
   int channel = 0;
-  int pitch = 64;
+  int pitch = thisPitch;
   int velocity = 127;
 
   myBus.sendNoteOn(channel, pitch, velocity); // Send a Midi noteOn
   delay(200);
   myBus.sendNoteOff(channel, pitch, velocity); // Send a Midi nodeOff
 
-  int number = 0;
-  int value = 90;
-
-  myBus.sendControllerChange(channel, number, value); // Send a controllerChange
-  delay(2000);
+//  REFERENCE: FOR SENDING CONTROL VALUES
+//  int number = 0;
+//  int value = 90;
+//
+//  myBus.sendControllerChange(channel, number, value); // Send a controllerChange
+//  delay(2000);
   
   
 }
