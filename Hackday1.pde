@@ -48,7 +48,7 @@ void setup() {
   
   // ** CONSTANTS ** //
   arrayLength = 10; // How many positions should we hold in memory
-  fps = 60;   // FPS
+  fps = 10;   // FPS
   // rate tuning i.e. how fast is fast?
   fastRate = 300;
   midRate = 150;
@@ -143,15 +143,15 @@ void assignArray() {
 
 /* incoming osc message are forwarded to the oscEvent method. */
 void oscEvent(OscMessage theOscMessage) {
-  /* print the address pattern and the typetag of the received OscMessage */
-  print("### received an osc message.");
-  print(" addrpattern: "+theOscMessage.addrPattern());
-  // println(" typetag: "+theOscMessage.typetag());
+  /* // print the address pattern and the typetag of the received OscMessage */
+  // print("### received an osc message.");
+  // print(" addrpattern: "+theOscMessage.addrPattern());
+  // // println(" typetag: "+theOscMessage.typetag());
   int blobId = theOscMessage.get(0).intValue();
   posX = theOscMessage.get(1).floatValue();
   posY = theOscMessage.get(2).floatValue();
   posZ = theOscMessage.get(3).floatValue();
-  println(" message is: " + blobId + ", " + posX + ", " + posY + ", " + posZ);
+  // println(" message is: " + blobId + ", " + posX + ", " + posY + ", " + posZ);
 }
 
 
@@ -162,8 +162,8 @@ void sendMidiNote(int thisChannel, float thisPitch, float thisVelocity) {
   int velocity = int(thisVelocity);
 
   myBus.sendNoteOn(channel, pitch, velocity); // Send a Midi noteOn
-  delay(10);
-  myBus.sendNoteOff(channel, pitch, velocity); // Send a Midi nodeOff
+  //delay(100);
+  //myBus.sendNoteOff(channel, pitch, velocity); // Send a Midi nodeOff
 
 //  REFERENCE: FOR SENDING CONTROL VALUES
 //  int number = 0;
@@ -181,25 +181,33 @@ void sendCtrlNote(int thisChannel, int thisNumber, float thisValue) {
   int value = int(thisValue);
   
   myBus.sendControllerChange(channel, number, value);
-  delay(10);
+  //delay(100);
 
 }
 
 
 void xyzToMidi() {
 
+  // X - Channel 1
   // Send X position as a midi note
   sendMidiNote(0,currentX,127);
+   
+  // X - Channel 2
+  // Send X position as a control
+  // sendCtrlNote(1,88,currentX);
   
-  
+  // Y - Channel 1 
   // Send Y position as a control function (map to filter)
-  sendCtrlNote(0,88,currentY);
+  // sendMidiNote(0,currentY,127);
+  sendCtrlNote(0,88,(128-currentY));
+  // sendCtrlNote(1,89,(128-currentY));
 
   
   // Send Z position as a control function (map to volume)
-  sendCtrlNote(0,89,currentZ);
+  // sendCtrlNote(0,89,128-currentZ);
   
-  println("X: " + currentX + ", Y is: " + currentY + ", Z is:" + currentZ);
+  
+  //// println("X: " + currentX + ", Y is: " + currentY + ", Z is:" + currentZ);
   
 }
 
@@ -213,18 +221,18 @@ void determineAction() {
   if(dpsX > fastRate || dpsY > fastRate || dpsZ > fastRate){
              // fast X action here
              sendMidiNote(0,72,127);
-             // println("fast X");
+             // // println("fast X");
   } else if(dpsX > midRate || dpsY > midRate || dpsZ > midRate) {
             // mid X action here
-             // println("mid X");
+             // // println("mid X");
              sendMidiNote(0,64,127);
   } else if(dpsX > slowRate || dpsY > slowRate || dpsZ > slowRate){
              // slow X action here
              sendMidiNote(0,32,127);
-             // println("slow X");
+             // // println("slow X");
   } else {
              // stagnant action
-             // println("stagnant");
+             // // println("stagnant");
   }
          
 }
@@ -243,7 +251,7 @@ void calculateRate() {
   dpsY = distanceY/(float(arrayLength)/float(fps));
   dpsZ = distanceZ/(float(arrayLength)/float(fps));
 
-  // println("Rate Vector is: " + dpsX + ", " + dpsY + ", " + dpsZ);
+  // // println("Rate Vector is: " + dpsX + ", " + dpsY + ", " + dpsZ);
 
 }
 
